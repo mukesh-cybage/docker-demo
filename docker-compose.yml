@@ -1,0 +1,63 @@
+version: '2'
+services:
+  #demo_docker_postgres:
+  #  image: postgres:9.5
+  #  container_name: demo_docker_postgres
+  #  environment:
+  #    POSTGRES_USER: demo_docker
+  #    POSTGRES_PASSWORD: demo_docker
+  #  ports:
+  #    - 127.0.0.1:12072:5432
+
+  #demo_docker_kafka:
+  #  image: kafka:0.10 # switch to spotify/kafka as soon as they merge and release this https://github.com/spotify/docker-kafka/pull/37
+  #  container_name: demo_docker_kafka
+  #  hostname: kafka
+  #  environment:
+  #    ADVERTISED_HOST: kafka
+  #    ADVERTISED_PORT: 9092
+  #  ports:
+  #    - 127.0.0.1:12076:9092
+  #    - 127.0.0.1:12077:2181
+
+  #################### Base / Tooling ####################
+
+  base: &base
+    build: .
+  #  env_file: .env
+  #  environment:
+  #    - VCR
+  #    - PHRASEAPP_KEY
+  #    - PHRASEAPP_TOKEN
+  #  links:
+  #    - demo_docker_postgres:postgres
+  #    - demo_docker_kafka:kafka
+    volumes:
+      - .:/app
+      - demo_docker_gems_2_3_1:/usr/local/bundle
+
+  #################### Usable Containers ####################
+
+  demo_docker_app:
+    <<: *base
+    container_name: demo_docker_app
+    command: /bin/bash bin/server.sh
+    ports:
+      - 127.0.0.1:12071:3000
+    environment:
+      - RAILS_ENV=development
+
+  demo_docker_tests:
+    <<: *base
+    container_name: demo_docker_tests
+    command: /bin/bash bin/rspec.sh
+    environment:
+      - RAILS_ENV=test
+
+networks:
+  default:
+    external:
+      name: demo_docker
+
+volumes:
+  demo_docker_gems_2_3_1:
