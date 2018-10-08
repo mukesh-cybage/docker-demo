@@ -1,13 +1,13 @@
 version: '2'
 services:
-  #demo_docker_postgres:
-  #  image: postgres:9.5
-  #  container_name: demo_docker_postgres
-  #  environment:
-  #    POSTGRES_USER: demo_docker
-  #    POSTGRES_PASSWORD: demo_docker
-  #  ports:
-  #    - 127.0.0.1:12072:5432
+  db:
+    image: postgres:10.5
+    container_name: demo_docker_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 127.0.0.1:12072:5432
 
   #demo_docker_kafka:
   #  image: kafka:0.10 # switch to spotify/kafka as soon as they merge and release this https://github.com/spotify/docker-kafka/pull/37
@@ -24,10 +24,10 @@ services:
 
   base: &base
     build: .
-  #  env_file: .env
-  #  environment: 
-  #  links:
-  #    - demo_docker_postgres:postgres
+    env_file: .env
+  #  environment:
+    links:
+      - db:demo_docker_postgres
   #    - demo_docker_kafka:kafka
     volumes:
       - .:/app
